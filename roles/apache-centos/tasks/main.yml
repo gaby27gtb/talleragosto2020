@@ -1,0 +1,44 @@
+---
+# tasks file for roles/apache-centos
+
+  - name: Install LAMP software
+    yum: 
+      name: httpd
+      state: latest
+
+  - name: Create virtualhost config directory
+    file:
+      path: /etc/httpd/vhost.d
+      state: directory
+      mode: '0755'
+      owner: root
+
+  - name: Add virtualhost config directory to http.conf
+    lineinfile: 
+      path: /etc/httpd/conf/httpd.conf
+      line: IncludeOptional vhost.d/*.conf
+
+  - name: Create virtualhost configuration
+    template: 
+      src: templates/{{ sitio }}.j2
+      dest: /etc/httpd/vhost.d/{{ sitio }}.conf
+      owner: root
+      mode: '0644'
+    notify: Restart httpd
+
+  - name: Start and enable apache
+    service:
+      name: httpd
+      state: started
+      enabled: yes
+  
+
+  - name: Configure firewall
+    firewalld:
+      service: "{{ item }}"
+      state: enabled
+      permanent: yes
+      immediate: yes
+    loop:
+      - http
+      - https
