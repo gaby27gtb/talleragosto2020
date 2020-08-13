@@ -18,14 +18,6 @@
       path: /etc/httpd/conf/httpd.conf
       line: IncludeOptional vhost.d/*.conf
 
-  - name: Create virtualhost configuration
-    template: 
-      src: templates/{{ sitio }}.j2
-      dest: /etc/httpd/vhost.d/{{ sitio }}.conf
-      owner: root
-      mode: '0644'
-    notify: Restart httpd
-
   - name: Start and enable apache
     service:
       name: httpd
