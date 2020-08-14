@@ -1,0 +1,9 @@
+---
+#variables para config de loadbalancer
+
+nombre_cluster: elbalanceador
+nodo1: nodo1.lab.ort
+nodo2: nodo2.lab.ort
+puerto1: 8080
+puerto2: 8082
+red_autorizada: 10.0.0.0/24
