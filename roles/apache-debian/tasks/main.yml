@@ -15,10 +15,11 @@
   
 
   - name: Configure firewall
-    uwf:
+    ufw:
       rule: allow
       port: "{{ item }}"
       state: enabled
     loop:
-      - 80
-      - 443
+      - '80'
+      - '443'
+      - '22'

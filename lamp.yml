@@ -5,16 +5,18 @@
   become_method: sudo
   vars:
     sitio: ejemplo
-    server: www.ejemplo.com.uy
-    hostmaster: admin@ejemplo.com.uy
-    
+  
+  vars_files:
+  - ./loadbalancer_vars.yml
+      
   roles:
   - role: './roles/apache-centos'
   #- when: ansible_facts['distribution'] == "CentOS"
     when: ansible_facts['os_family'] == "RedHat"
-  
+  - role: './roles/apache-debian'
+    when: ansible_facts['os_family'] == "Debian"
+    
   tasks:
-
   - name: Create virtualhost content directories
     file:
       path: "{{ item }}"
@@ -28,18 +30,27 @@
       - /var/www/{{ sitio }}/html
       - /var/www/{{ sitio }}/cgi-bin
    
-   -name: Create loadbalancer configuration
+  - name: Create loadbalancer configuration for CentOS
     template:
-      scr: template/loadbalancer.j2
+      src: ./templates/loadbalancer.j2
       dest: /etc/httpd/vhost.d/loadbalancer.conf
       owner: root
       mode: '0644'
-    when: ansible_fact['os_family'] == "Redhat"
+    when: ansible_facts['os_family'] == "RedHat"
     notify: Restart httpd
 
-  handlers:
-  - name: Restart httpd
-    service:
-      name: httpd
-      state: restarted
-      enabled: yes
+  - name: Carga de modulo de proxy para ubuntu
+    apache2_module:
+      name: proxy
+      state: present
+    when: ansible_facts['os_family'] == "Debian"
+    notify: Restart apache2
+    
+  - name: Create loadbalancer configuration for Ubuntu
+    template:
+      src: ./templates/loadbalancer.j2
+      dest: /etc/apache2/sites-enabled/000-default.conf
+      owner: root
+      mode: '0664'
+    when: ansible_facts['os_family'] == "Debian"
+    notify: Restart apache2
