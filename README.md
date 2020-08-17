@@ -34,13 +34,13 @@ Paso 3 - Chequeo y ejecucion:
 
 - ubicarse en la carpeta descargada y ejecutar el siguiente comando para chequear que la sintaxis del PLaybook sea correcta:
 
-ansible-playbook -i inventario --check lamp.yml --ask-become-pass
+ansible-playbook -i inventario --check lamp.yml
 
 Si el comando no devulve ningun error de sintaxis continuar con lo siguientes, de lo contrario verificar nuevamente los archivos .yml.
 
 - Si todo lo anterior esta correcto, se puede ejecutar el playbook con el siguiente comando:
 
-ansible-playbook -i inventario lamp.yml --ask-become-pass
+ansible-playbook -i inventario lamp.yml
 
 Con esto deberia quedar apache instalado y configurado en los equipos indicados en "inventario", en caso que se presente algun error,
 verificar los archivos nuevamente.
